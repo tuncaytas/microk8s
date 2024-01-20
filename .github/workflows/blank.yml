@@ -1,0 +1,41 @@
+name: Deploy MicroK8s
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
+
+jobs:
+  deploy-microk8s:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Apply Terraform Changes
+      run: terraform apply -auto-approve
+
+    - name: Extract Public IP
+      id: extract-public-ip
+      run: echo "::set-output name=ip::$(terraform output public_ip)"
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install Ansible
+      run: |
+        pip install ansible
+
+    - name: Run Ansible Playbook
+      run: ansible-playbook -i "${{ steps.extract-public-ip.outputs.ip }}, " install-microk8s.yml
