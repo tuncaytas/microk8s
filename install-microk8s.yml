@@ -1,0 +1,7 @@
+---
+- name: Install MicroK8s
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install MicroK8s
+      shell: snap install microk8s --classic
