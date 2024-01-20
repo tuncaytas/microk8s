@@ -32,7 +32,7 @@ jobs:
 
     - name: Extract Public IP
       id: extract-public-ip
-      run: echo "::set-output name=ip::$(terraform output public_ip)"
+      run: echo "::set-output name=ip::$(terraform output -raw public_ip | xargs)"
 
     - name: Set up Python
       uses: actions/setup-python@v2
